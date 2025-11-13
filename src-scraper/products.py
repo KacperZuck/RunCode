@@ -48,7 +48,8 @@ def parse_product_page(url, driver, category_hierarchy):
         "sizes": [],
         "description": None,
         "additional_info": {},
-        "category": category_hierarchy
+        "category": category_hierarchy,
+        "images": []
     }
 
     driver.get(url)
@@ -98,5 +99,16 @@ def parse_product_page(url, driver, category_hierarchy):
                 label=label_tag.text.strip()
                 value=value_tag.text.strip()
                 product['additional_info'][label]=value
+
+    images=[]
+    gallery = soup.find('div', class_='woocommerce-product-gallery__wrapper')
+    if gallery:
+        for img in gallery.find_all('a', href=True):
+            img_src = img.get('href', '').strip()
+            if img_src:
+                images.append(img_src)
+
+    if images:
+        product['images'] = images[:2]
 
     return product

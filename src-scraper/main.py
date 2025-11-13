@@ -14,7 +14,7 @@ def create_driver():
 
 
 def main():
-    print("Pobieranie kategorii...")
+    #print("Pobieranie kategorii...")
     categories = get_categories()
     save_json(categories, CATEGORIES_FILE)
     #print(f"Kategorie zapisane do {CATEGORIES_FILE}")
@@ -26,12 +26,13 @@ def main():
         if category["subcategories"] == []:
             if category.get("url"):
                 links=[]
-                print(category["url"])
+                #print(category["url"])
                 get_products_url(category['url'], driver, links)
-                print(links)
+                #print(links)
                 for link in links:
                     product = parse_product_page(link, driver, [category['name']])
                     products.append(product)
+                    #print(product)
                 continue
         else:
             for sub in category["subcategories"]:
@@ -42,6 +43,7 @@ def main():
                         for link in links:
                             product = parse_product_page(link, driver, [category['name'], sub['name']])
                             products.append(product)
+                            #print(product)
                         continue
                 else:
                     for item in sub["items"]:
@@ -51,6 +53,7 @@ def main():
                             for link in links:
                                 product = parse_product_page(link, driver, [category['name'], sub['name'], item['name']])
                                 products.append(product)
+                                #print(product)
 
 
     driver.quit()
