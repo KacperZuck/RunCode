@@ -6,6 +6,6 @@ source venv/bin/activate
 
 pip install -r requirements.txt
 
-#python init_categories.py
+python init_categories.py
 
 python init_products.py
