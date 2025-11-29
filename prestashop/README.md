@@ -29,7 +29,7 @@ This repository provides a reproducible PrestaShop development environment using
 
 * **URL:** `http://localhost:8080/admin-dev`
 * **Email:** `demo@prestashop.com`
-* **Password:** `demo123`
+* **Password:** `prestashop_demo`
 
 ---
 
@@ -68,4 +68,5 @@ Note: Team members only need to pull the changes and re-import the updated db.sq
 3. Import the shared database dump:
     ```bash
     docker exec -i some-mysql mysql -u root -padmin prestashop < db.sql
+
     ```
