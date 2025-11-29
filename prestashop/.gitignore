@@ -6,3 +6,11 @@ src/var/logs
 src/var/sessions
 src/var/modules
 src/themes/*/assets/cache/
+
+__pycache__/
+/*/venv
+.venv
+venv
+.idea/
+
+.env
