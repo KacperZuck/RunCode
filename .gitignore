@@ -1,4 +1,3 @@
-.env
 src/config/defines_custom.inc.php
 src/var/cache
 src/var/logs
@@ -12,4 +11,3 @@ __pycache__/
 venv
 .idea/
 
-.env
