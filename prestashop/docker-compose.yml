@@ -29,8 +29,8 @@ services:
       PS_LANGUAGE: ${PS_LANGUAGE:-pl}
       PS_COUNTRY: ${PS_COUNTRY:-pl}
       PS_FOLDER_ADMIN: admin-dev
-      #PS_FOLDER_INSTALL: install-dev
-      #PS_INSTALL_AUTO: 1 
+      PS_FOLDER_INSTALL: install-dev
+      PS_INSTALL_AUTO: 1 
       PS_DOMAIN: localhost:8080
     volumes:
       - ./src:/var/www/html
