@@ -174,9 +174,10 @@ class PrestaShopTest:
         invoice_link = self.wait.until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".order-actions .btn-link"))   # clas name dla pobrania faktury jak juz bedzie oddana
         )
-        # Kliknięcie w link faktury. Selenium automatycznie zainicjuje pobieranie.
+
+
         invoice_link.click()
-        print("Faktura VAT została pobrana.")
+        print("Faktura VAT została pobrana.") # Jesli bedzie dodana w prestashop
 
 
 
