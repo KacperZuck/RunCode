@@ -1,6 +1,11 @@
 # PrestaShop Docker Environment
 
-This repository provides a reproducible PrestaShop development environment using Docker and MySQL.
+This repository provides a reproducible PrestaShop 1.7.8 development environment using Docker and MySQL.
+
+The environment is fully configured to meet project requirements, including:
+* **HTTPS:** Self-signed SSL certificate generated automatically during the build.
+* **MailHog:** Email trapping tool for testing notifications.
+* **Database:** MySQL 5.7.
 
 ---
 
@@ -10,63 +15,65 @@ This repository provides a reproducible PrestaShop development environment using
 
 * Git repository cloned locally
 
+* Ports **80**, **443**, and **8025** must be free on your host machine.
+
 ---
 
 ## Getting Started
 
-1.  Run the containers in detached mode:
+1.  **Build and Run**
+    Since we use a custom `Dockerfile` to handle SSL certificates, use the `--build` flag for the first run:
 
     ```bash
-    docker compose up -d
+    docker compose up -d --build
     ```
 
-2.  Open the shop in your browser:
-    * **Frontend:** `http://localhost:8080`
+2.  **Access the Shop**
+    * **Frontend:** [https://localhost](https://localhost)
+    * *Note:* Your browser will show a **"Not Secure"** or "Connection is not private" warning. This is expected because we are using a self-signed certificate. You must accept the risk (Click "Advanced" -> "Proceed to localhost") to access the site.
 
 ---
 
 ## Admin Panel
 
-* **URL:** `http://localhost:8080/admin-dev`
+* **URL:** `https://localhost/admin-dev`
 * **Email:** `demo@prestashop.com`
 * **Password:** `prestashop_demo`
 
+
+## MailHog (Email Testing)
+Captures all emails sent by the shop (e.g., registration, order confirmation).
+* **Interface:** `http://localhost:8025`
+
+
+## Database (MySQL)
+* **Container Name:** `some-mysql`
+* **Root Password:** `admin`
+* **Database:** `prestashop`
 ---
 
 ## Database Management
 
-### Importing Database Dump
+### Importing changes
 
-Run this command to import the `db.sql` file into the `some-mysql` container:
+If a team member has pushed a new `db.sql` to the repository, you need to reset your database to match theirs. The cleanest way to do this is:
 
+1.  Stop containers and remove volumes (this wipes your current DB data):
     ```bash
-    docker exec -i some-mysql mysql -u root -padmin prestashop < db.sql
+    docker compose down -v
+    ```
+2.  Start again (Docker will automatically import the new `db.sql`):
+    ```bash
+    docker compose up -d
     ```
 
-### Exporting Database Dump
-Run this command to export the current database state from the container into `db.sql`:
+### Exporting changes
+If you have made significant changes (e.g., added products, configured modules, changed settings), you must update the `db.sql` file:
+
+1. Export the current database state:
 
     ```bash
     docker exec some-mysql mysqldump -u root -padmin prestashop > db.sql
     ```
 
-
-### When to Update the Dump
-The db.sql file in the repository should be updated after any significant changes, such as:
-* After installing or removing modules
-* After adding products or configuration changes
-* After data or structural database updates
-Note: Team members only need to pull the changes and re-import the updated db.sql.
-
-## First-Time setup
-
-1. Clone the repository.
-2. Start the containers from Runcode/prestashop:
-    ```bash
-    docker compose up -d
-    ```
-3. Import the shared database dump:
-    ```bash
-    docker exec -i some-mysql mysql -u root -padmin prestashop < db.sql
-
-    ```
+2. Commit and push the updated `db.sql` to the repository.
