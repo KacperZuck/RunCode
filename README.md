@@ -1,2 +1,4 @@
 # RunCode
-team making *actual shop about running
+team making working shop about running which is model of accual site: 
+https://brooks-running.pl
+
