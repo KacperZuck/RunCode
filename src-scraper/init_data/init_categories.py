@@ -6,6 +6,9 @@ import time
 from dotenv import load_dotenv
 from unidecode import unidecode
 from xml.etree import ElementTree
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 load_dotenv()
 
@@ -53,7 +56,7 @@ def create_category(item, parent_id):
 
     headers = {'Content-Type': 'application/xml'}
 
-    response = requests.post(CATEGORIES_URL, auth=(API_KEY, ''), headers=headers, data=xml_data.encode('utf-8'))
+    response = requests.post(CATEGORIES_URL, auth=(API_KEY, ''), headers=headers, verify=False, data=xml_data.encode('utf-8'))
 
     if response.status_code in [200, 201]:
         tree = ElementTree.fromstring(response.content)

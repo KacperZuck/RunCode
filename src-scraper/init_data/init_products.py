@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 from unidecode import unidecode
 import time
 import xml.etree.ElementTree as ET
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # --- KONFIGURACJA ---
 load_dotenv()
@@ -82,7 +85,7 @@ def clean_sku(sku_str):
 def build_category_map():
     print("Pobieram hierarchiczną mapę kategorii...")
     try:
-        r = requests.get(f"{API_URL}/categories?display=full", auth=(API_KEY, ''))
+        r = requests.get(f"{API_URL}/categories?display=full", auth=(API_KEY, ''), verify=False)
         if r.status_code == 200:
             root = ET.fromstring(r.content)
             for cat in root.findall(".//category"):
@@ -145,7 +148,7 @@ def get_or_create_attribute_group(group_name):
     clean = group_name.strip()
     params = {'filter[name]': f'[{clean}]', 'display': '[id]', 'limit': 1}
     try:
-        r = requests.get(f"{API_URL}/product_options", auth=(API_KEY, ''), params=params)
+        r = requests.get(f"{API_URL}/product_options", auth=(API_KEY, ''), params=params, verify=False)
         node = ET.fromstring(r.content).find('.//product_option/id')
         if node is not None: return node.text
     except: pass
@@ -157,14 +160,14 @@ def get_or_create_attribute_group(group_name):
             <name><language id="{ID_LANG}">{clean}</language></name>
             <public_name><language id="{ID_LANG}">{clean}</language></public_name>
         </product_option></prestashop>"""
-    r = requests.post(f"{API_URL}/product_options", auth=(API_KEY, ''), headers=HEADERS, data=xml.encode('utf-8'))
+    r = requests.post(f"{API_URL}/product_options", auth=(API_KEY, ''), headers=HEADERS, verify=False, data=xml.encode('utf-8'))
     if r.status_code in [200, 201]: return ET.fromstring(r.content).findtext('.//id')
     return None
 
 def get_or_create_attribute_value(group_id, value_name):
     params = {'filter[id_attribute_group]': f'[{group_id}]', 'display': 'full'} 
     try:
-        r = requests.get(f"{API_URL}/product_option_values", auth=(API_KEY, ''), params=params)
+        r = requests.get(f"{API_URL}/product_option_values", auth=(API_KEY, ''), params=params, verify=False)
         if r.status_code == 200:
             for val in ET.fromstring(r.content).findall('.//product_option_value'):
                 name_node = val.find(f'.//name/language[@id="{ID_LANG}"]')
@@ -178,7 +181,7 @@ def get_or_create_attribute_value(group_id, value_name):
             <id_attribute_group>{group_id}</id_attribute_group>
             <name><language id="{ID_LANG}">{value_name}</language></name>
         </product_option_value></prestashop>"""
-    r = requests.post(f"{API_URL}/product_option_values", auth=(API_KEY, ''), headers=HEADERS, data=xml.encode('utf-8'))
+    r = requests.post(f"{API_URL}/product_option_values", auth=(API_KEY, ''), headers=HEADERS, verify=False, data=xml.encode('utf-8'))
     if r.status_code in [200, 201]: return ET.fromstring(r.content).findtext('.//id')
     return None
 
@@ -187,14 +190,14 @@ def add_feature(feature_name, feature_value):
     params = {'filter[name]': f'[{clean}]', 'display': '[id]', 'limit': 1}
     fid = None
     try:
-        r = requests.get(f"{API_URL}/product_features", auth=(API_KEY, ''), params=params)
+        r = requests.get(f"{API_URL}/product_features", auth=(API_KEY, ''), params=params, verify=False)
         node = ET.fromstring(r.content).find('.//product_feature/id')
         if node is not None: fid = node.text
     except: pass
 
     if not fid:
         xml = f"""<prestashop><product_feature><name><language id="{ID_LANG}">{clean}</language></name></product_feature></prestashop>"""
-        r = requests.post(f"{API_URL}/product_features", auth=(API_KEY, ''), headers=HEADERS, data=xml.encode('utf-8'))
+        r = requests.post(f"{API_URL}/product_features", auth=(API_KEY, ''), headers=HEADERS, verify=False, data=xml.encode('utf-8'))
         if r.status_code in [200, 201]: fid = ET.fromstring(r.content).findtext('.//id')
         else: return None
     
@@ -202,7 +205,7 @@ def add_feature(feature_name, feature_value):
         <id_feature>{fid}</id_feature>
         <value><language id="{ID_LANG}">{feature_value}</language></value>
         <custom>1</custom></product_feature_value></prestashop>"""
-    r = requests.post(f"{API_URL}/product_feature_values", auth=(API_KEY, ''), headers=HEADERS, data=xml_v.encode('utf-8'))
+    r = requests.post(f"{API_URL}/product_feature_values", auth=(API_KEY, ''), headers=HEADERS, verify=False, data=xml_v.encode('utf-8'))
     if r.status_code in [200, 201]: return {'id': fid, 'id_feature_value': ET.fromstring(r.content).findtext('.//id')}
     return None
 
@@ -211,7 +214,7 @@ def add_feature(feature_name, feature_value):
 def update_stock_available(product_id, attribute_id, quantity):
     url = f"{API_URL}/stock_availables?display=full&filter[id_product]={product_id}&filter[id_product_attribute]={attribute_id}"
     try:
-        r = requests.get(url, auth=(API_KEY, ''))
+        r = requests.get(url, auth=(API_KEY, ''), verify=False)
         root = ET.fromstring(r.content)
         stock_node = root.find('.//stock_available')
         
@@ -237,7 +240,7 @@ def update_stock_available(product_id, attribute_id, quantity):
             </stock_available>
         </prestashop>"""
         
-        r_put = requests.put(f"{API_URL}/stock_availables/{stock_id}", auth=(API_KEY, ''), headers=HEADERS, data=xml_update.encode('utf-8'))
+        r_put = requests.put(f"{API_URL}/stock_availables/{stock_id}", auth=(API_KEY, ''), headers=HEADERS, verify=False, data=xml_update.encode('utf-8'))
         
         if r_put.status_code != 200:
             print(f"Błąd Stock ({r_put.status_code}): {r_put.text}")
@@ -248,10 +251,10 @@ def update_stock_available(product_id, attribute_id, quantity):
 def upload_images(product_id, image_urls):
     for url in image_urls:
         try:
-            img_resp = requests.get(url, timeout=10)
+            img_resp = requests.get(url, timeout=10, verify=False)
             if img_resp.status_code == 200:
                 files = {'image': ('image.jpg', img_resp.content, 'image/jpeg')}
-                r_img = requests.post(f"{API_URL}/images/products/{product_id}", auth=(API_KEY, ''), files=files)
+                r_img = requests.post(f"{API_URL}/images/products/{product_id}", auth=(API_KEY, ''), files=files, verify=False)
                 if r_img.status_code != 200:
                     print(f"Błąd zdjęcia ({url}): {r_img.status_code}")
             else:
@@ -305,7 +308,7 @@ def create_product(data, category_data, feature_list, weight):
     </prestashop>
     """
 
-    response = requests.post(f"{API_URL}/products", auth=(API_KEY, ''), headers=HEADERS, data=xml_data.encode('utf-8'))
+    response = requests.post(f"{API_URL}/products", auth=(API_KEY, ''), headers=HEADERS, verify=False, data=xml_data.encode('utf-8'))
     
     if response.status_code in [200, 201]:
         return ET.fromstring(response.content).findtext('.//id')
@@ -314,7 +317,7 @@ def create_product(data, category_data, feature_list, weight):
         # Awaryjnie szukamy po sku
         try:
             params = {'filter[reference]': f'[{reference}]', 'display': '[id]', 'limit': 1}
-            r = requests.get(f"{API_URL}/products", auth=(API_KEY, ''), params=params)
+            r = requests.get(f"{API_URL}/products", auth=(API_KEY, ''), params=params, verify=False)
             if r.status_code == 200:
                 node = ET.fromstring(r.content).find('.//product/id')
                 if node is not None: return node.text
@@ -343,7 +346,7 @@ def create_combination(product_id, attribute_value_id, quantity=5):
         </combination>
     </prestashop>"""
     
-    response = requests.post(f"{API_URL}/combinations", auth=(API_KEY, ''), headers=HEADERS, data=xml.encode('utf-8'))
+    response = requests.post(f"{API_URL}/combinations", auth=(API_KEY, ''), headers=HEADERS, verify=False, data=xml.encode('utf-8'))
     
     if response.status_code in [200, 201]:
         return ET.fromstring(response.content).findtext('.//id')

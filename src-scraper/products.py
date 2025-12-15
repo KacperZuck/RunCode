@@ -79,7 +79,7 @@ def parse_product_page(url, driver, category_hierarchy):
         if 'cfvsw-swatches-disabled' not in classes:
             product['sizes'].append(size.text.strip())
 
-    description_container = soup.find('div', class_="elementor-template")
+    description_container = soup.find('div', class_="elementor-widget-woocommerce-product-content")
     texts = []
     if description_container:
         for tag in description_container.find_all(['p', 'h2', 'h3', 'li']):

@@ -33,6 +33,7 @@ def main():
                     product = parse_product_page(link, driver, [category['name']])
                     products.append(product)
                     print(product["name"])
+                    print(product["description"])
                 continue
         else:
             for sub in category["subcategories"]:
@@ -44,6 +45,7 @@ def main():
                             product = parse_product_page(link, driver, [category['name'], sub['name']])
                             products.append(product)
                             print(product["name"])
+                            print(product["description"])
                         continue
                 else:
                     for item in sub["items"]:
@@ -54,6 +56,7 @@ def main():
                                 product = parse_product_page(link, driver, [category['name'], sub['name'], item['name']])
                                 products.append(product)
                                 print(product["name"])
+                                print(product["description"])
 
 
     driver.quit()
