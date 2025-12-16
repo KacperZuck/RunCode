@@ -1,22 +1,22 @@
 /* --- ZMIANA KOLORU NAGŁÓWKA (GŁĘBOKI GRANAT) --- */
 
 /* 1. Tło nagłówka */
-#header .header-nav, 
+#header .header-nav,
 #header .header-top {
     /* To jest kolor #0d47a1 - ciemny, nasycony niebieski. 
        Inne opcje w tym stylu:
        #1565c0 (Trochę jaśniejszy)
        #003366 (Klasyczny, biurowy granat)
     */
-    background-color: #0d47a1 !important; 
+    background-color: #0d47a1 !important;
     border-bottom: none !important;
 }
 
 /* 2. Teksty i linki na biało */
-#header .header-nav a, 
+#header .header-nav a,
 #header .header-nav span,
-#header .header-top a, 
-#header .header-top ul.top-menu > li > a {
+#header .header-top a,
+#header .header-top ul.top-menu>li>a {
     color: #ffffff !important;
 }
 
@@ -36,4 +36,9 @@
 #contact-link a,
 .user-info a {
     color: #ffffff !important;
+}
+
+/* 6. Naprawa menu rozwijanego (przywrócenie ciemnego tekstu na białym tle) */
+#header .header-top .top-menu .sub-menu a {
+    color: #333333 !important;
 }
