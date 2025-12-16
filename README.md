@@ -6,17 +6,21 @@ Shop is based on prestashop 1.7.8 version, with scrapper and automatical tests m
 
 Sposób uruchomienia
 Upewnij się, że masz zainstalowanego Dockera i Docker Compose.
+
 Sklonuj repozytorium:
-git clone https://github.com/nstkpchk/Electronic_business_project.git
-cd Electronic_business_project/
-3.Uruchom kontenery Dockera:
+git clone https://github.com/KacperZuck/RunCode
+
+cd RunCode/
+
+Uruchom kontenery Dockera:
 
 docker compose up -d
-4.Poczekaj, aż kontenery się uruchomią. Można też zobaczyć logi kontenera prestashop
+
+Poczekaj, aż kontenery się uruchomią. Można też zobaczyć logi kontenera prestashop
 
 docker compose logs -f prestashop
-5.Otwórz przeglądarkę i wpisz adres:
 
+Otwórz przeglądarkę i wpisz adres:
 https://localhost:8002
 
 
@@ -25,3 +29,4 @@ Kacper Żuchowski
 Tymon Szałankiewicz
 Maciej Kowalczyk
 Maciek Łukasiewicz
+
